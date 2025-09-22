@@ -1,14 +1,8 @@
-# Use Node.js 18 Alpine as the base image
-FROM node:18-alpine
-
-# Set working directory
+# Stage 1: Builder - Prepare dependencies and copy built artifacts
+FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
-
-# Copy package.json and install production dependencies
+# Copy package files and install production dependencies
 COPY package.json package-lock.json* ./
 RUN npm ci --omit=dev
 
@@ -20,6 +14,17 @@ COPY public ./public
 # Copy generated Prisma and ZenStack files
 COPY prisma ./prisma
 COPY .zenstack ./zenstack
+
+# Stage 2: Runner - Production runtime
+FROM node:18-alpine AS runner
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copy built application from builder stage
+COPY --from=builder /app ./
 
 # Set ownership to non-root user
 RUN chown -R nextjs:nodejs /app

@@ -1,11 +1,13 @@
 name: Deploy to AWS ECS
 
 on:
-  workflow_run:
-    workflows: ["CI/CD Pipeline"]
-    types:
-      - completed
-    branches: [ main ]
+  # Temporarily disabled - enable after AWS infrastructure is deployed
+  # workflow_run:
+  #   workflows: ["CI/CD Pipeline"]
+  #   types:
+  #     - completed
+  #   branches: [ main ]
+  workflow_dispatch: # Manual trigger only for now
 
 env:
   AWS_REGION: us-east-1
@@ -17,7 +19,8 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Condition disabled since workflow_run trigger is commented out
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     permissions:
       contents: read

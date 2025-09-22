@@ -24,9 +24,6 @@ model User {
   accounts      Account[]
   sessions      Session[]
   todos         Todo[]
-
-  // Allow users to read their own profile
-  @@allow('all', auth() == this)
 }
 
 model Account {
@@ -46,9 +43,6 @@ model Account {
   refresh_token_expires_in Int?
 
   @@unique([provider, providerAccountId])
-  
-  // Only allow users to access their own accounts
-  @@allow('all', auth().id == userId)
 }
 
 model Session {
@@ -57,9 +51,6 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Only allow users to access their own sessions
-  @@allow('all', auth().id == userId)
 }
 
 model VerificationToken {
@@ -68,9 +59,6 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-  
-  // Allow all operations for verification tokens
-  @@allow('all', true)
 }
 
 // ----------------------
@@ -87,8 +75,4 @@ model Todo {
   userId    String
 
   @@index([title])
-  
-  // ZenStack Access Control Rules
-  @@allow('create', auth() != null)
-  @@allow('read,update,delete', auth().id == userId)
 }

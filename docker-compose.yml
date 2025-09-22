@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   # Next.js Application
   app:
@@ -7,28 +8,20 @@ services:
     image: todo-app
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=product
-      - DATABASE_URL=postgresql://celine:password@db:5432/todo
-      - NEXTAUTH_SECRET=your-secret-key-here
-      - NEXTAUTH_URL=http://localhost:3000
-      - AUTH_SECRET=your-secret-key-here
-      - AUTH_GOOGLE_ID=dummy-google-id
-      - AUTH_GOOGLE_SECRET=dummy-google-secret
-    depends_on:
-      - db
+    env_file:
+      - .env  # Load environment variables from .env file
+    # depends_on:
+    #   - db
     networks:
       - app-network
 
   # PostgreSQL Database
   db:
     image: postgres:15-alpine
-    environment:
-      - POSTGRES_USER=celine
-      - POSTGRES_PASSWORD=celine45
-      - POSTGRES_DB=todo
+    env_file:
+      - .env  # Load database credentials from .env
     ports:
-      - "5433:5432"
+      - "5433:5432"  # Map host port 5433 to container port 5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:

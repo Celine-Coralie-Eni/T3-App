@@ -3,8 +3,12 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const todoRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
-    // ZenStack automatically filters based on access control rules
-    return (ctx.db as any).todo.findMany({
+  //   return rawDb.todo.findMany({
+  //     orderBy: { createdAt: "desc" },
+  //   });
+  // }),
+    // ZenStack version (secure) 
+    return ctx.db.todo.findMany({
       orderBy: { createdAt: "desc" },
     });
   }),
@@ -13,7 +17,7 @@ export const todoRouter = createTRPCRouter({
     .input(z.object({ title: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       // ZenStack automatically sets userId based on context
-      return (ctx.db as any).todo.create({
+      return ctx.db.todo.create({
         data: {
           title: input.title,
           userId: ctx.session.user.id,
@@ -28,7 +32,7 @@ export const todoRouter = createTRPCRouter({
     }))
     .mutation(async ({ ctx, input }) => {
       // ZenStack automatically enforces access control
-      return (ctx.db as any).todo.update({
+      return ctx.db.todo.update({
         where: { id: input.id },
         data: { title: input.title },
       });
@@ -38,7 +42,7 @@ export const todoRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       // ZenStack automatically enforces access control
-      const todo = await (ctx.db as any).todo.findFirst({
+      const todo = await ctx.db.todo.findFirst({
         where: { id: input.id },
       });
 
@@ -46,7 +50,7 @@ export const todoRouter = createTRPCRouter({
         throw new Error("Todo not found");
       }
 
-      return (ctx.db as any).todo.update({
+      return ctx.db.todo.update({
         where: { id: input.id },
         data: { completed: !todo.completed },
       });
@@ -56,7 +60,7 @@ export const todoRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       // ZenStack automatically enforces access control
-      return (ctx.db as any).todo.delete({
+      return ctx.db.todo.delete({
         where: { id: input.id },
       });
     }),

@@ -1,12 +1,3 @@
-/**
- * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
- * 1. You want to modify request context (see Part 1).
- * 2. You want to create a new middleware or type of procedure (see Part 3).
- *
- * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
- * need to use are documented accordingly near the end.
- */
-
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
@@ -14,18 +5,6 @@ import { ZodError } from "zod";
 import { auth } from "~/server/auth";
 import { createEnhancedDb } from "~/server/db";
 
-/**
- * 1. CONTEXT
- *
- * This section defines the "contexts" that are available in the backend API.
- *
- * These allow you to access things when processing a request, like the database, the session, etc.
- *
- * This helper generates the "internals" for a tRPC context. The API handler and RSC clients each
- * wrap this and provides the required context.
- *
- * @see https://trpc.io/docs/server/context
- */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
 

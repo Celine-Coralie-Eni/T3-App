@@ -23,7 +23,6 @@ model User {
   password      String?
   accounts      Account[]
   sessions      Session[]
-  posts         Post[]
   todos         Todo[]
 
   // Allow users to read their own profile
@@ -77,20 +76,6 @@ model VerificationToken {
 // ----------------------
 // Content Models
 // ----------------------
-model Post {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  createdBy   User   @relation(fields: [createdById], references: [id])
-  createdById String
-
-  @@index([name])
-  
-  // Only allow users to manage their own posts
-  @@allow('create', auth() != null)
-  @@allow('read,update,delete', auth().id == createdById)
-}
 
 model Todo {
   id        String   @id @default(cuid())

@@ -58,7 +58,10 @@ jobs:
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
         NEXTAUTH_SECRET: test-secret
+        AUTH_SECRET: test-secret
         NEXTAUTH_URL: http://localhost:3000
+        AUTH_GOOGLE_ID: test-google-id
+        AUTH_GOOGLE_SECRET: test-google-secret
 
     - name: Run tests (if any)
       run: npm test --if-present

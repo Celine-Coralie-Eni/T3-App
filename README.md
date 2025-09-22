@@ -178,86 +178,44 @@ This project demonstrates:
 2. Access the app at `http://localhost:3000`
 3. PostgreSQL runs on port `5433` to avoid conflicts
 
-## 🚀 GitOps Pipeline & AWS Deployment
+## 🚀 CI/CD Pipeline
 
-This project includes a complete **GitOps pipeline** for automated deployment to AWS ECS using:
+This project includes a **GitHub Actions CI/CD pipeline** for automated testing and Docker image building:
 
-- **GitHub Actions** - CI/CD automation
-- **Docker** - Containerization
-- **Terraform** - Infrastructure as Code
-- **AWS ECS** - Container orchestration
-- **AWS RDS** - Managed PostgreSQL
-- **Application Load Balancer** - Traffic distribution
+- **GitHub Actions** - Automated CI/CD workflow
+- **Docker** - Containerization and image building
+- **GitHub Container Registry** - Docker image storage
+- **Security Scanning** - Vulnerability detection
 
-### Pipeline Architecture
+### Pipeline Flow
 
 ```
-Code Push → GitHub Actions → Docker Build → ECR Push → ECS Deploy → Live App
-     ↓
-  Terraform → AWS Infrastructure (VPC, ECS, RDS, ALB)
+Code Push → GitHub Actions → Test → Build → Docker Build → Push to GHCR → Security Scan
 ```
 
-### Deployment Steps
+### What the Pipeline Does
 
-1. **Setup AWS Credentials**
-   ```bash
-   aws configure
-   # Or use IAM roles for GitHub Actions
-   ```
+1. **Test Phase**:
+   - Sets up Node.js and PostgreSQL test database
+   - Installs dependencies
+   - Generates Prisma and ZenStack clients
+   - Runs database migrations
+   - Builds the Next.js application
+   - Runs tests (if any)
 
-2. **Configure Terraform Variables**
-   ```bash
-   cp terraform/terraform.tfvars.example terraform/terraform.tfvars
-   # Edit terraform.tfvars with your values
-   ```
+2. **Build & Push Phase**:
+   - Builds Docker image
+   - Tags with branch name and commit SHA
+   - Pushes to GitHub Container Registry
+   - Runs security vulnerability scanning
 
-3. **Deploy Infrastructure**
-   ```bash
-   # Initialize and deploy
-   ./scripts/deploy.sh init
-   ./scripts/deploy.sh deploy
-   
-   # Or step by step
-   ./scripts/deploy.sh plan
-   ./scripts/deploy.sh deploy
-   ```
+### Viewing Pipeline Results
 
-4. **Setup GitHub Secrets**
-   - `AWS_ROLE_ARN` - IAM role for GitHub Actions
-   - Database credentials and other secrets
-
-### Infrastructure Components
-
-- **VPC** with public/private subnets across 2 AZs
-- **ECS Fargate** cluster for container orchestration
-- **RDS PostgreSQL** with automated backups
-- **Application Load Balancer** with health checks
-- **ECR** for Docker image storage
-- **CloudWatch** for logging and monitoring
-- **SSM Parameter Store** for secrets management
-
-### Monitoring & Health Checks
-
-- **Container Health**: `/api/health` endpoint
-- **ECS Service**: Automatic task replacement
-- **RDS Monitoring**: Performance Insights enabled
-- **ALB Health Checks**: Automatic traffic routing
-
-### Security Features
-
-- **VPC Isolation** - Private subnets for app and database
-- **Security Groups** - Restrictive network access
-- **IAM Roles** - Least privilege access
-- **Encrypted Storage** - RDS encryption at rest
-- **HTTPS Support** - SSL/TLS termination at ALB
-
-### Scaling & High Availability
-
-- **Multi-AZ Deployment** - Fault tolerance
-- **Auto Scaling** - ECS service scaling
-- **Load Balancing** - Traffic distribution
-- **Database Backups** - 7-day retention
+- Go to your GitHub repository
+- Click the **Actions** tab
+- See workflow runs and their status
+- View logs for each step
 
 ---
 
-*This project demonstrates modern full-stack development with T3 Stack, ZenStack, and complete GitOps deployment pipeline to AWS.*
+*This project demonstrates modern full-stack development with T3 Stack, ZenStack, and automated CI/CD pipeline with Docker.*

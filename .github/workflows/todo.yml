@@ -57,11 +57,11 @@ jobs:
       run: npm run build
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
-        NEXTAUTH_SECRET: test-secret
-        AUTH_SECRET: test-secret
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
         NEXTAUTH_URL: http://localhost:3000
-        AUTH_GOOGLE_ID: test-google-id
-        AUTH_GOOGLE_SECRET: test-google-secret
+        AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
+        AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
 
     - name: Run tests (if any)
       run: npm test --if-present

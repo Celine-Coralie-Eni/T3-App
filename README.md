@@ -204,7 +204,7 @@ Code Push → GitHub Actions → Test → Build → Docker Build → Push to GHC
    - Runs tests (if any)
 
 2. **Build & Push Phase**:
-   - Builds Docker image
+   - Builds Docker image 
    - Tags with branch name and commit SHA
    - Pushes to GitHub Container Registry
    - Runs security vulnerability scanning

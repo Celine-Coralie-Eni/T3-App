@@ -47,6 +47,7 @@ yarn-error.log*
 
 # Personal files
 README.md
+README.pdf 
 
 # Environment and secrets
 .env

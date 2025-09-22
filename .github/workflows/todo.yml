@@ -45,8 +45,6 @@ jobs:
     - name: Generate Prisma client
       run: npx prisma generate
 
-    - name: Generate ZenStack
-      run: npm run zen:generate:ci || npm run zen:generate
 
     - name: Run database migrations
       run: npx prisma migrate deploy

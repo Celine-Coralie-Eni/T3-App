@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { enhance, type Enhanced } from "@zenstackhq/runtime";
+import { enhance } from "@zenstackhq/runtime";
 
 import { env } from "~/env";
 
@@ -10,17 +10,20 @@ const createPrismaClient = () =>
   });
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: ReturnType<typeof createPrismaClient> | undefined;
+  prisma: PrismaClient | undefined;
 };
 
-const basePrisma = globalForPrisma.prisma ?? createPrismaClient();
+const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-// Create ZenStack enhanced client factory
-export const createEnhancedDb = (userId?: string): Enhanced<PrismaClient> => {
-  return enhance(basePrisma, { user: userId ? { id: userId } : undefined });
+if (env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+// Enhanced database client with ZenStack access control
+export const db = enhance(prisma);
+
+// Raw Prisma client for operations that need to bypass access control
+export const rawDb = prisma;
+
+// Function to create enhanced database client with user context
+export const createEnhancedDb = (user?: { id: string }) => {
+  return enhance(prisma, { user });
 };
-
-// Export base client for NextAuth adapter only
-export const rawDb = basePrisma;
-
-if (env.NODE_ENV !== "production") globalForPrisma.prisma = basePrisma;

@@ -6,6 +6,10 @@ plugin enhancer {
   provider = '@core/enhancer'
 }
 
+plugin prisma {
+  provider = '@core/prisma'
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")

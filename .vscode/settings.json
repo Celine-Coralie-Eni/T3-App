@@ -1,0 +1,6 @@
+{
+  "zenstack.trace.server": "verbose",
+  "files.associations": {
+    "*.zmodel": "zenstack"
+  }
+}

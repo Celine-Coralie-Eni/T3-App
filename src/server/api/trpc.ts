@@ -9,7 +9,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
 
   // Create ZenStack enhanced client with user context for automatic access control
-  const enhancedDb = createEnhancedDb(session?.user?.id);
+  const enhancedDb = createEnhancedDb(session?.user ? { id: session.user.id } : undefined);
 
   // Debug logging
   if (session?.user) {

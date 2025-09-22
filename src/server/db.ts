@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { enhance } from "../../node_modules/.zenstack/enhance";
+import { enhance, type Enhanced } from "@zenstackhq/runtime";
 
 import { env } from "~/env";
 
@@ -16,7 +16,7 @@ const globalForPrisma = globalThis as unknown as {
 const basePrisma = globalForPrisma.prisma ?? createPrismaClient();
 
 // Create ZenStack enhanced client factory
-export const createEnhancedDb = (userId?: string) => {
+export const createEnhancedDb = (userId?: string): Enhanced<PrismaClient> => {
   return enhance(basePrisma, { user: userId ? { id: userId } : undefined });
 };
 

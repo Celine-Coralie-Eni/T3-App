@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "zen:generate": "npx zenstack generate",
-    "zen:generate:ci": "node ./node_modules/.bin/zenstack generate",
+    "zen:generate": "node --no-warnings ./node_modules/.bin/zenstack generate",
+    "zen:generate:ci": "node --no-warnings ./node_modules/.bin/zenstack generate",
     "check": "next lint && tsc --noEmit",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
@@ -32,7 +32,7 @@
     "@trpc/server": "^11.0.0",
     "@types/bcryptjs": "^2.4.6",
     "@zenstackhq/runtime": "2.19.0",
-    "@zenstackhq/server": "^2.19.0",
+    "@zenstackhq/server": "2.19.0",
     "bcryptjs": "^3.0.2",
     "next": "^15.2.3",
     "next-auth": "5.0.0-beta.25",
@@ -48,7 +48,7 @@
     "@types/node": "^20.14.10",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@zenstackhq/cli": "^3.0.0-alpha.0",
+    "@zenstackhq/cli": "^3.0.0-alpha.0", 
     "eslint": "^9.23.0",
     "eslint-config-next": "^15.2.3",
     "postcss": "^8.5.3",
@@ -57,8 +57,7 @@
     "prisma": "6.16.x",
     "tailwindcss": "^4.0.15",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.27.0",
-    "zenstack": "2.19.0"
+    "typescript-eslint": "^8.27.0"
   },
   "ct3aMetadata": {
     "initVersion": "7.39.3"

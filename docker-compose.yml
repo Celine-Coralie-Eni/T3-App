@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Next.js Application
   app:
@@ -10,10 +8,13 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://celine:celine45@db:5432/todo
+      - NODE_ENV=product
+      - DATABASE_URL=postgresql://celine:password@db:5432/todo
       - NEXTAUTH_SECRET=your-secret-key-here
       - NEXTAUTH_URL=http://localhost:3000
+      - AUTH_SECRET=your-secret-key-here
+      - AUTH_GOOGLE_ID=dummy-google-id
+      - AUTH_GOOGLE_SECRET=dummy-google-secret
     depends_on:
       - db
     networks:

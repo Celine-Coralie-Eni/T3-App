@@ -46,7 +46,7 @@ jobs:
       run: npx prisma generate
 
     - name: Generate ZenStack
-      run: npx zenstack generate
+      run: npm run zen:generate:ci || npm run zen:generate
 
     - name: Run database migrations
       run: npx prisma migrate deploy

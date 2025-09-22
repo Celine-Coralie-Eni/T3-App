@@ -6,8 +6,20 @@ WORKDIR /app
 # Copy package files
 COPY package.json package-lock.json* ./
 
+# # Install dependencies
+# RUN npm ci --only=production --ignore-scripts
+
 # Install dependencies
-RUN npm ci --only=production --ignore-scripts
+RUN npm ci --ignore-scripts
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Generate ZenStack artifacts
+RUN npx zenstack generate
+
+# Build Next.js application
+RUN npm run build
 
 # Stage 2: Builder - Build the application
 FROM node:18-alpine AS builder

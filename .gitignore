@@ -47,6 +47,17 @@ yarn-error.log*
 
 # Personal files
 README.pdf 
+README.md
+TERRAFORM_DEPLOYMENT.md
+
+# Terraform sensitive files
+terraform.tfvars
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
+
+# ZenStack generated files
+.zenstack
 
 # Environment and secrets
 .env

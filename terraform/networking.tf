@@ -151,7 +151,7 @@ resource "aws_security_group" "alb" {
   }
 }
 
-# Security Group for ECS Tasks
+# Security Group for ECS Tasks (Application)
 resource "aws_security_group" "ecs_tasks" {
   name_prefix = "${var.app_name}-ecs-tasks-"
   vpc_id      = aws_vpc.main.id
@@ -165,6 +165,7 @@ resource "aws_security_group" "ecs_tasks" {
   }
 
   egress {
+    description = "All outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -173,6 +174,102 @@ resource "aws_security_group" "ecs_tasks" {
 
   tags = {
     Name = "${var.app_name}-ecs-tasks-sg"
+    Type = "Application"
+  }
+}
+
+# Security Group for Database ECS Tasks
+resource "aws_security_group" "database" {
+  name_prefix = "${var.app_name}-database-"
+  vpc_id      = aws_vpc.main.id
+
+  # Allow PostgreSQL connections from application security group
+  ingress {
+    description     = "PostgreSQL from App"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ecs_tasks.id]
+  }
+
+  # Allow outbound traffic for database operations
+  egress {
+    description = "All outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.app_name}-database-sg"
+    Type = "Database"
+  }
+}
+
+# Security Group for EFS Mount Targets
+resource "aws_security_group" "efs" {
+  name_prefix = "${var.app_name}-efs-"
+  vpc_id      = aws_vpc.main.id
+
+  # Allow NFS traffic from database security group
+  ingress {
+    description     = "NFS from Database"
+    from_port       = 2049
+    to_port         = 2049
+    protocol        = "tcp"
+    security_groups = [aws_security_group.database.id]
+  }
+
+  egress {
+    description = "All outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.app_name}-efs-sg"
+    Type = "Storage"
+  }
+}
+
+# =============================================
+# SERVICE DISCOVERY
+# =============================================
+
+# Private DNS namespace for internal service communication
+resource "aws_service_discovery_private_dns_namespace" "main" {
+  name        = "${var.app_name}.local"
+  description = "Private DNS namespace for ${var.app_name} services"
+  vpc         = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.app_name}-dns-namespace"
+    Type = "ServiceDiscovery"
+  }
+}
+
+# Service discovery service for database
+resource "aws_service_discovery_service" "database" {
+  name = "${var.app_name}-db"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.main.id
+    
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+    
+    routing_policy = "MULTIVALUE"
+  }
+
+
+  tags = {
+    Name = "${var.app_name}-db-service-discovery"
+    Type = "Database"
   }
 }
 

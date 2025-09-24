@@ -36,12 +36,7 @@ variable "desired_count" {
   default     = 2
 }
 
-# Database configuration
-variable "database_url" {
-  description = "PostgreSQL database URL"
-  type        = string
-  sensitive   = true
-}
+# Database configuration removed - using service discovery instead
 
 variable "auth_secret" {
   description = "Auth secret"

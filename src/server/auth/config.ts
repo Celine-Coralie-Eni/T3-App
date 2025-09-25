@@ -123,7 +123,11 @@ export const authConfig = {
     },
     async redirect({ url, baseUrl }) {
       console.log("Redirect callback:", { url, baseUrl });
-      // Always redirect to home page after OAuth success
+      // If url is relative, prepend baseUrl
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // If url is on same origin, allow it
+      if (new URL(url).origin === baseUrl) return url;
+      // Otherwise redirect to home page
       return baseUrl;
     },
   },

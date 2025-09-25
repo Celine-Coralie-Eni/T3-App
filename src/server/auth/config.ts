@@ -90,8 +90,33 @@ export const authConfig = {
      */
   ],
   // adapter: PrismaAdapter(rawDb), // Temporarily disabled - database connection issues
+  session: {
+    strategy: "jwt", // Use JWT sessions when no database adapter
+  },
   debug: true, // Enable debug in production for OAuth troubleshooting
   callbacks: {
+    async jwt({ token, user, account, profile }) {
+      console.log("JWT callback:", { token, user, account, profile });
+      // Persist user info in JWT token
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
+        token.image = user.image;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      console.log("Session callback:", { session, token });
+      // Send properties to the client
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.image = token.image as string;
+      }
+      return session;
+    },
     async signIn({ user, account, profile }) {
       console.log("SignIn callback:", { user, account, profile });
       return true;
@@ -101,12 +126,5 @@ export const authConfig = {
       // Always redirect to home page after OAuth success
       return baseUrl;
     },
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
   },
 } satisfies NextAuthConfig;

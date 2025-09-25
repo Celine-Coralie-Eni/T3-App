@@ -36,6 +36,7 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
+  trustHost: true,
   providers: [
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -89,6 +90,7 @@ export const authConfig = {
      */
   ],
   adapter: PrismaAdapter(rawDb),
+  debug: process.env.NODE_ENV === "development",
   callbacks: {
     session: ({ session, user }) => ({
       ...session,
@@ -97,5 +99,13 @@ export const authConfig = {
         id: user.id,
       },
     }),
+    async signIn({ user, account, profile }) {
+      console.log("SignIn callback:", { user, account, profile });
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      console.log("Redirect callback:", { url, baseUrl });
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
   },
 } satisfies NextAuthConfig;

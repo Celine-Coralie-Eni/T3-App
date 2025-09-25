@@ -13,11 +13,12 @@ terraform {
 provider "aws" {
   region = var.aws_region
   
-  default_tags {
-    tags = {
-      Project     = "t3-app"
-      Environment = var.environment
-      ManagedBy   = "terraform"
-    }
-  }
+  # Temporarily removed default tags due to ec2:CreateTags permission issue
+  # default_tags {
+  #   tags = {
+  #     Project     = "todo-app"
+  #     Environment = var.environment
+  #     ManagedBy   = "terraform"
+  #   }
+  # }
 }

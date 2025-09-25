@@ -52,8 +52,11 @@ TERRAFORM_DEPLOYMENT.md
 
 # Terraform sensitive files
 terraform.tfvars
+terraform.tfvars.example
 terraform.tfstate
 terraform.tfstate.backup
+terraform.tfstate.*.backup
+*.tfplan
 .terraform/
 
 # ZenStack generated files
@@ -95,4 +98,7 @@ coverage/
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.dbexisting_data.sql
+Thumbs.db
+
+# SQL data files
+existing_data.sql

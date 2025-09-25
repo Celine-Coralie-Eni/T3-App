@@ -15,13 +15,13 @@ variable "environment" {
 variable "app_name" {
   description = "Application name"
   type        = string
-  default     = "t3-app"
+  default     = "todo-app"
 }
 
 variable "container_image" {
   description = "Docker image URI from GitHub Container Registry"
   type        = string
-  default     = "ghcr.io/celine-coralie-eni/t3-app:latest"
+  default     = "ghcr.io/celine-coralie-eni/todo-app:latest"
 }
 
 variable "container_port" {
@@ -36,7 +36,12 @@ variable "desired_count" {
   default     = 2
 }
 
-# Database configuration removed - using service discovery instead
+# Database configuration
+variable "database_url" {
+  description = "Database connection URL"
+  type        = string
+  sensitive   = true
+}
 
 variable "auth_secret" {
   description = "Auth secret"

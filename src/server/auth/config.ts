@@ -89,7 +89,7 @@ export const authConfig = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  adapter: PrismaAdapter(rawDb),
+  // adapter: PrismaAdapter(rawDb), // Temporarily disabled - database connection issues
   debug: true, // Enable debug in production for OAuth troubleshooting
   callbacks: {
     async signIn({ user, account, profile }) {

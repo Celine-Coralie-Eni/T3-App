@@ -89,12 +89,34 @@ export const authConfig = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  adapter: PrismaAdapter(rawDb),
+  // adapter: PrismaAdapter(rawDb), // Temporarily disabled - causing configuration error in production
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   debug: true, // Enable debug in production for OAuth troubleshooting
   callbacks: {
+    async jwt({ token, user, account, profile }) {
+      console.log("JWT callback:", { token, user, account, profile });
+      // Persist user info in JWT token
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
+        token.image = user.image;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      console.log("Session callback:", { session, token });
+      // Send properties to the client
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.image = token.image as string;
+      }
+      return session;
+    },
     async signIn({ user, account, profile }) {
       console.log("SignIn callback:", { user, account, profile });
       return true;

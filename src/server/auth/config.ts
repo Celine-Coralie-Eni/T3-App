@@ -89,7 +89,7 @@ export const authConfig = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  // adapter: PrismaAdapter(rawDb), // Temporarily disabled for OAuth testing
+  adapter: PrismaAdapter(rawDb),
   debug: true, // Enable debug in production for OAuth troubleshooting
   callbacks: {
     async signIn({ user, account, profile }) {
@@ -98,11 +98,15 @@ export const authConfig = {
     },
     async redirect({ url, baseUrl }) {
       console.log("Redirect callback:", { url, baseUrl });
-      return url.startsWith(baseUrl) ? url : baseUrl;
+      // Always redirect to home page after OAuth success
+      return baseUrl;
     },
-    async session({ session, token }) {
-      console.log("Session callback:", { session, token });
-      return session;
-    },
+    session: ({ session, user }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: user.id,
+      },
+    }),
   },
 } satisfies NextAuthConfig;

@@ -79,7 +79,7 @@ model Todo {
   userId    String
 
   // Access control policies
-  @@allow('create', auth() != null && userId == auth().id)
+  @@allow('create', auth() != null)
   @@allow('read', auth() != null && userId == auth().id)
   @@allow('update', auth() != null && userId == auth().id)
   @@allow('delete', auth() != null && userId == auth().id)

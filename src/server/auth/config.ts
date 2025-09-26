@@ -106,14 +106,14 @@ export const authConfig = {
       }
       return token;
     },
-    async session({ session, token }) {
-      console.log("Session callback:", { session, token });
-      // Send properties to the client
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-        session.user.image = token.image as string;
+    async session({ session, user }) {
+      console.log("Session callback:", { session, user });
+      // Send properties to the client (with database sessions, user comes from DB)
+      if (user) {
+        session.user.id = user.id;
+        session.user.email = user.email;
+        session.user.name = user.name;
+        session.user.image = user.image;
       }
       return session;
     },

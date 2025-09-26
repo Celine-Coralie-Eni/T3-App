@@ -89,9 +89,9 @@ export const authConfig = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  // adapter: PrismaAdapter(rawDb), // Temporarily disabled - causing configuration error in production
+  adapter: PrismaAdapter(rawDb),
   session: {
-    strategy: "jwt",
+    strategy: "database",
   },
   debug: true, // Enable debug in production for OAuth troubleshooting
   callbacks: {

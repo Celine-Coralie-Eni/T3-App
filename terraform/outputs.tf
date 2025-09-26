@@ -36,4 +36,7 @@ output "application_url" {
   value       = "http://${local.alb_fqdn}"
 }
 
-# CloudWatch outputs removed 
+output "database_dns_endpoint" {
+  description = "Database IP address for direct connection"
+  value       = local.database_dns_name
+}

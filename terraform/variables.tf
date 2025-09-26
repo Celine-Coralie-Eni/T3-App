@@ -38,9 +38,8 @@ variable "desired_count" {
 
 # Database configuration
 variable "database_url" {
-  description = "Database connection URL"
+  description = "PostgreSQL database URL"
   type        = string
-  sensitive   = true
 }
 
 variable "auth_secret" {

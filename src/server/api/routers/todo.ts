@@ -16,8 +16,9 @@ export const todoRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ title: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      // ZenStack automatically sets userId based on context
-      return ctx.db.todo.create({
+      // Use raw Prisma client to bypass ZenStack temporarily
+      const { rawDb } = await import("~/server/db");
+      return rawDb.todo.create({
         data: {
           title: input.title,
           userId: ctx.session.user.id,

@@ -102,7 +102,7 @@ export const authConfig = {
         sameSite: 'lax',
         path: '/',
         secure: false, // Set to false for HTTP in AWS ALB
-        domain: undefined, // Let browser determine domain
+        domain: '.eu-central-1.elb.amazonaws.com', // Set domain for ALB
       }
     }
   },

@@ -94,6 +94,18 @@ export const authConfig = {
     strategy: "database",
   },
   debug: true, // Enable debug in production for OAuth troubleshooting
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false, // Set to false for HTTP in AWS ALB
+        domain: undefined, // Let browser determine domain
+      }
+    }
+  },
   callbacks: {
     async jwt({ token, user, account, profile }) {
       console.log("JWT callback:", { token, user, account, profile });

@@ -16,10 +16,11 @@ export const todoRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ title: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      // Debug logging - log to both console and response
+      // Debug logging - throw error with session info for browser visibility
       const sessionUser = ctx.session.user;
-      console.log("=== TODO CREATE DEBUG ===");
-      console.log("Session user:", JSON.stringify(sessionUser, null, 2));
+      
+      // Throw detailed error to see in browser console
+      throw new Error(`DEBUG INFO - Session user: ${JSON.stringify(sessionUser, null, 2)}`);
       
       // Use raw Prisma client to bypass ZenStack temporarily
       const { rawDb } = await import("~/server/db");

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
 export const todoRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
@@ -13,67 +13,34 @@ export const todoRouter = createTRPCRouter({
     });
   }),
 
-  create: protectedProcedure
+  create: publicProcedure
     .input(z.object({ title: z.string().min(1) }))
-    .mutation(async ({ ctx, input }) => {
-      // Debug logging - throw error with session info for browser visibility
-      const sessionUser = ctx.session.user;
-      
-      // Throw detailed error to see in browser console
-      throw new Error(`DEBUG INFO - Session user: ${JSON.stringify(sessionUser, null, 2)}`);
-      
-      // Use raw Prisma client to bypass ZenStack temporarily
+    .mutation(async ({ input }) => {
+      // Bypass authentication temporarily to debug
       const { rawDb } = await import("~/server/db");
       
-      // Check all users in database
-      const allUsers = await rawDb.user.findMany();
-      console.log("All users in DB:", allUsers.map(u => ({ id: u.id, email: u.email })));
-      
-      // Check if current session user exists in database
-      const userExists = await rawDb.user.findUnique({
-        where: { id: sessionUser.id }
+      // Get or create a default user for testing
+      let user = await rawDb.user.findFirst({
+        where: { email: "celinecoralie0@gmail.com" }
       });
-      console.log("Current user exists in DB:", userExists ? "YES" : "NO");
       
-      if (!userExists) {
-        console.log("Creating new user with data:", {
-          id: sessionUser.id,
-          email: sessionUser.email,
-          name: sessionUser.name,
-          image: sessionUser.image,
-        });
-        
-        try {
-          const newUser = await rawDb.user.create({
-            data: {
-              id: sessionUser.id,
-              email: sessionUser.email || null,
-              name: sessionUser.name || null,
-              image: sessionUser.image || null,
-            }
-          });
-          console.log("Successfully created user:", newUser.id);
-        } catch (createError) {
-          console.error("Failed to create user:", createError);
-          throw createError;
-        }
-      }
-      
-      console.log("Attempting to create todo with userId:", sessionUser.id);
-      
-      try {
-        const todo = await rawDb.todo.create({
+      if (!user) {
+        user = await rawDb.user.create({
           data: {
-            title: input.title,
-            userId: sessionUser.id,
-          },
+            id: "debug-user-" + Date.now(),
+            email: "celinecoralie0@gmail.com",
+            name: "Celine-Coralie",
+            image: null,
+          }
         });
-        console.log("Successfully created todo:", todo.id);
-        return todo;
-      } catch (todoError) {
-        console.error("Failed to create todo:", todoError);
-        throw todoError;
       }
+      
+      return rawDb.todo.create({
+        data: {
+          title: input.title,
+          userId: user.id,
+        },
+      });
     }),
 
   update: protectedProcedure

@@ -16,30 +16,35 @@ export const todoRouter = createTRPCRouter({
   create: publicProcedure
     .input(z.object({ title: z.string().min(1) }))
     .mutation(async ({ input }) => {
-      // Bypass authentication temporarily to debug
+      // Direct database test - create user and todo in single transaction
       const { rawDb } = await import("~/server/db");
       
-      // Get or create a default user for testing
-      let user = await rawDb.user.findFirst({
-        where: { email: "celinecoralie0@gmail.com" }
-      });
-      
-      if (!user) {
-        user = await rawDb.user.create({
+      return rawDb.$transaction(async (tx) => {
+        // Delete all existing data first
+        await tx.todo.deleteMany({});
+        await tx.session.deleteMany({});
+        await tx.account.deleteMany({});
+        await tx.user.deleteMany({});
+        
+        // Create fresh user
+        const user = await tx.user.create({
           data: {
-            id: "debug-user-" + Date.now(),
+            id: "test-user-" + Date.now(),
             email: "celinecoralie0@gmail.com",
             name: "Celine-Coralie",
             image: null,
           }
         });
-      }
-      
-      return rawDb.todo.create({
-        data: {
-          title: input.title,
-          userId: user.id,
-        },
+        
+        // Create todo with the fresh user
+        const todo = await tx.todo.create({
+          data: {
+            title: input.title,
+            userId: user.id,
+          },
+        });
+        
+        return { todo, user };
       });
     }),
 

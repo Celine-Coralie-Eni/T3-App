@@ -94,7 +94,10 @@ export const authConfig = {
   ],
   adapter: PrismaAdapter(rawDb),
   session: {
-    strategy: "database",
+    strategy: "jwt",
+  },
+  pages: {
+    error: "/auth/signin",
   },
   debug: true, // Enable debug in production for OAuth troubleshooting
   callbacks: {
@@ -109,14 +112,14 @@ export const authConfig = {
       }
       return token;
     },
-    async session({ session, user }) {
-      console.log("Session callback:", { session, user });
-      // Send properties to the client (with database sessions, user comes from DB)
-      if (user) {
-        session.user.id = user.id;
-        session.user.email = user.email;
-        session.user.name = user.name;
-        session.user.image = user.image;
+    async session({ session, token, user }) {
+      console.log("Session callback:", { session, token, user });
+      // With JWT strategy, read from token
+      if (token) {
+        session.user.id = (token as any).id as string;
+        session.user.email = token.email as string | null;
+        session.user.name = token.name as string | null;
+        session.user.image = token.image as string | null;
       }
       return session;
     },

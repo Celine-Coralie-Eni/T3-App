@@ -13,39 +13,17 @@ export const todoRouter = createTRPCRouter({
     });
   }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(z.object({ title: z.string().min(1) }))
-    .mutation(async ({ input }) => {
-      // Direct database test - create user and todo in single transaction
-      const { rawDb } = await import("~/server/db");
-      
-      return rawDb.$transaction(async (tx) => {
-        // Delete all existing data first
-        await tx.todo.deleteMany({});
-        await tx.session.deleteMany({});
-        await tx.account.deleteMany({});
-        await tx.user.deleteMany({});
-        
-        // Create fresh user
-        const user = await tx.user.create({
-          data: {
-            id: "test-user-" + Date.now(),
-            email: "celinecoralie0@gmail.com",
-            name: "Celine-Coralie",
-            image: null,
-          }
-        });
-        
-        // Create todo with the fresh user
-        const todo = await tx.todo.create({
-          data: {
-            title: input.title,
-            userId: user.id,
-          },
-        });
-        
-        return { todo, user };
+    .mutation(async ({ ctx, input }) => {
+      // Create todo for the authenticated user via ZenStack-enforced client
+      const todo = await ctx.db.todo.create({
+        data: {
+          title: input.title,
+          userId: ctx.session.user.id,
+        },
       });
+      return todo;
     }),
 
   update: protectedProcedure

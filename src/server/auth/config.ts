@@ -41,6 +41,9 @@ export const authConfig = {
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID!,
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+      // Allow linking accounts that share the same verified email across providers
+      // Fixes: "Sign in with the same account you used originally" loop
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       name: "credentials",
@@ -94,18 +97,6 @@ export const authConfig = {
     strategy: "database",
   },
   debug: true, // Enable debug in production for OAuth troubleshooting
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: false, // Set to false for HTTP in AWS ALB
-        domain: '.eu-central-1.elb.amazonaws.com', // Set domain for ALB
-      }
-    }
-  },
   callbacks: {
     async jwt({ token, user, account, profile }) {
       console.log("JWT callback:", { token, user, account, profile });

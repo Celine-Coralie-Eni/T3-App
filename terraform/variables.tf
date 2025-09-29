@@ -21,7 +21,7 @@ variable "app_name" {
 variable "container_image" {
   description = "Docker image URI from GitHub Container Registry"
   type        = string
-  default     = "ghcr.io/celine-coralie-eni/todo-app:latest"
+  default     = "ghcr.io/celine-coralie-eni/t3-app:latest"
 }
 
 variable "container_port" {

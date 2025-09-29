@@ -165,7 +165,7 @@ resource "aws_ecs_task_definition" "db_migration" {
   container_definitions    = jsonencode([
     {
       name      = "db-migration"
-      image     = "ghcr.io/celine-coralie-eni/todo-app:latest"
+      image     = "ghcr.io/celine-coralie-eni/t3-app:latest"
       command   = ["sh", "-c", "npx prisma migrate deploy && node scripts/import-data.js"]
       environment = [
         { name = "DATABASE_URL", value = "postgresql://celine:celine45@${local.database_dns_name}:5433/todo" },

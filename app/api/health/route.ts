@@ -44,10 +44,6 @@ export async function GET() {
     } catch (e: any) {
       result.db.connected = false;
       result.db.test.error = e?.message ?? String(e);
-    } finally {
-      try {
-        await rawDb.$disconnect();
-      } catch {}
     }
 
     return NextResponse.json(result, { status: 200 });

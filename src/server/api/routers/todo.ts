@@ -9,6 +9,7 @@ export const todoRouter = createTRPCRouter({
   // }),
     // ZenStack version (secure) 
     return ctx.db.todo.findMany({
+      where: { userId: ctx.session.user.id },
       orderBy: { createdAt: "desc" },
     });
   }),
@@ -16,7 +17,20 @@ export const todoRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ title: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      // Create todo for the authenticated user via ZenStack-enforced client
+      // Ensure the user exists in the DB (some earlier debug code may have deleted users)
+      const { rawDb } = await import("~/server/db");
+      await rawDb.user.upsert({
+        where: { id: ctx.session.user.id },
+        update: {},
+        create: {
+          id: ctx.session.user.id,
+          email: ctx.session.user.email!,
+          name: ctx.session.user.name ?? null,
+          image: ctx.session.user.image ?? null,
+        },
+      });
+
+      // Create todo for the authenticated user
       const todo = await ctx.db.todo.create({
         data: {
           title: input.title,
